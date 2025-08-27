@@ -37,7 +37,11 @@ const salesSchema = new mongoose.Schema(
       min: 0
     }
   },
-  { timestamps: true } // adds createdAt & updatedAt
+  
+  { 
+    collection: 'Sales',
+    timestamps: true 
+    } // adds createdAt & updatedAt
 );
 
 module.exports = mongoose.model('Sales', salesSchema);
