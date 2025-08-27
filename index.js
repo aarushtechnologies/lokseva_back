@@ -4,9 +4,6 @@ let app = express()
 
 const port = process.env.PORT || 4000;
 
-
-
-
 let RegisterRouter = require('./routes/registers.js')
 let OffersRouter = require('./routes/offers.js')
 let BirthdaysRouter = require('./routes/birthdays.js')
