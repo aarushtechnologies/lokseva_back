@@ -10,20 +10,24 @@ const optionalString = {
   type: String,
   required: false,
 };
-
 const RegisterSchema = new mongoose.Schema(
   {
-    name: requiredString,          // Name
-    taluka: requiredString,        // Taluka
-    gaon: requiredString,          // Gaon
-    gender: optionalString,        // Gender
-    mobile: requiredString,        // Mobile
-    photo: optionalString,         // URL to profile photo
+    name: requiredString,
+    taluka: requiredString,
+    gaon: requiredString,
+    gender: optionalString,
+    mobile: requiredString,
+    photo: optionalString,
+    professions: [{ type: String }],
+    details:optionalString,
+    images :[{type:String}]
   },
-    // { timestamps: true },
-    { collection: 'Register' } // <-- ✅ match the actual collection name
-
+  {
+    collection: 'Register',
+    timestamps: true, // ✅ Mongoose will auto-add createdAt and updatedAt
+  }
 );
+
 
 
 module.exports = new mongoose.model('Register', RegisterSchema)
