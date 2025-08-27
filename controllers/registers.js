@@ -2,53 +2,65 @@ require('../dbConnect')
 
 let Registers = require('../models/registers.js')
 
-let allRegisters = async(req,res)=>{
+// ✅ Get all registered users
+let allRegisters = async (req, res) => {
+  try {
     let data = await Registers.find()
-    // res.send(data)    
     res.json(data)
+  } catch (err) {
+    res.status(500).json({ error: err.message })
+  }
 }
 
-
-let singleRegister = async(req,res)=>{
+// ✅ Get single user by ID
+let singleRegister = async (req, res) => {
+  try {
     let _id = req.params._id
-    // res.send('Home Page')
-    let data = await Registers.find({_id:  _id})
+    let data = await Registers.findOne({ _id: _id }) // using findOne instead of find()
     res.json(data)
+  } catch (err) {
+    res.status(500).json({ error: err.message })
+  }
 }
 
-
-
-let deleteRegister= async(req,res)=>{
+// ✅ Delete user
+let deleteRegister = async (req, res) => {
+  try {
     let _id = req.params._id
-
-    let result = await Registers.deleteOne({_id: _id})
-    res.json({'status':'success'})
+    await Registers.deleteOne({ _id: _id })
+    res.json({ status: 'success' })
+  } catch (err) {
+    res.status(500).json({ error: err.message })
+  }
 }
 
-let insertRegister = async(req,res)=>{
+// ✅ Insert new user
+let insertRegister = async (req, res) => {
+  try {
     let body = req.body
-    // console.log(body)
-    await Registers.insertOne(body)  
-    res.json({'status':'success'})
+    await Registers.create(body) // ✅ fixed insertOne → create
+    res.json({ status: 'success' })
+  } catch (err) {
+    res.status(500).json({ error: err.message })
+  }
 }
 
-
-let updateRegister = async(req,res)=>{
+// ✅ Update existing user
+let updateRegister = async (req, res) => {
+  try {
     let body = req.body
     let _id = req.params._id
-    
-    await Registers.updateOne({_id:_id},{
-        $set: body
-    })  
-    res.json({'status':'success'})
-
+    await Registers.updateOne({ _id: _id }, { $set: body })
+    res.json({ status: 'success' })
+  } catch (err) {
+    res.status(500).json({ error: err.message })
+  }
 }
-
 
 module.exports = {
-    allRegisters,
-    singleRegister,
-    deleteRegister,
-    insertRegister,
-    updateRegister
+  allRegisters,
+  singleRegister,
+  deleteRegister,
+  insertRegister,
+  updateRegister,
 }

@@ -1,22 +1,28 @@
-let express = require('express')
+let express = require('express');
 
-let {allRegisters,singleRegister, deleteRegister,insertRegister,updateRegister} = require('../controllers/registers.js')
-let router = express.Router()
+let { 
+  allRegisters,
+  singleRegister, 
+  deleteRegister,
+  insertRegister,
+  updateRegister
+} = require('../controllers/registers.js');
 
-// All Inquiries
-router.get('/', allRegisters)
+let router = express.Router();
 
-// Inquiry by Id
-router.get('/:_id',singleRegister)
+// Get all registers
+router.get('/', allRegisters);
 
-// delete by Id
-router.delete('/:_id',deleteRegister)
+// Get single register by ID
+router.get('/:_id', singleRegister);
 
+// Insert a new register
+router.post('/', insertRegister);
 
-// //Insert Data
-router.post('/',insertRegister)
+// Update a register by ID
+router.patch('/:_id', updateRegister);
 
-
-router.patch('/:_id',updateRegister)
+// Delete a register by ID
+router.delete('/:_id', deleteRegister);
 
 module.exports = router;
