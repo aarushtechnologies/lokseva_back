@@ -1,0 +1,28 @@
+let express = require('express');
+
+let { 
+  allUsers,
+  singleUser, 
+  deleteUser,
+  insertUser,
+  updateUser
+} = require('../controllers/users.js');
+
+let router = express.Router();
+
+// Get all Users
+router.get('/', allUsers);
+
+// Get single User by ID
+router.get('/:_id', singleUser);
+
+// Insert a new User
+router.post('/', insertUser);
+
+// Update a User by ID
+router.patch('/:_id', updateUser);
+
+// Delete a User by ID
+router.delete('/:_id', deleteUser);
+
+module.exports = router;

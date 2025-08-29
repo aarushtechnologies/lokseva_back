@@ -10,7 +10,7 @@ const optionalString = {
   type: String,
   required: false,
 };
-const RegisterSchema = new mongoose.Schema(
+const UsersSchema = new mongoose.Schema(
   {
     name: requiredString,
     taluka: requiredString,
@@ -23,11 +23,11 @@ const RegisterSchema = new mongoose.Schema(
     images :[{type:String}]
   },
   {
-    collection: 'Register',
+    collection: 'users',
     timestamps: true, // ✅ Mongoose will auto-add createdAt and updatedAt
   }
 );
 
 
 
-module.exports = new mongoose.model('Register', RegisterSchema)
+module.exports = new mongoose.model('users', UsersSchema)
