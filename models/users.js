@@ -17,10 +17,9 @@ const UsersSchema = new mongoose.Schema(
     gaon: requiredString,
     gender: optionalString,
     mobile: requiredString,
-    photo: optionalString,
     professions: [{ type: String }],
-    details:optionalString,
-    images :[{type:String}]
+    details:optionalString
+    
   },
   {
     collection: 'users',

@@ -1,28 +1,9 @@
 require('../dbConnect.js')
-
 let Users = require('../models/users.js')
 
-
-const multer = require('multer');
-const path = require('path');
-
-// Define storage configuration
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, './uploads/');  // Specify the folder where files will be saved
-  },
-  filename: (req, file, cb) => {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-    cb(null, file.fieldname + '-' + uniqueSuffix + path.extname(file.originalname));  // Unique filename
-  }
-});
-
-// Create multer upload instance
-const upload = multer({ storage: storage });
-
-
-// ✅ Get all Usered users
+// ✅ Get all users
 let allUsers = async (req, res) => {
+  console.log('Fetching data');
   try {
     let data = await Users.find()
     res.json(data)
@@ -35,7 +16,7 @@ let allUsers = async (req, res) => {
 let singleUser = async (req, res) => {
   try {
     let _id = req.params._id
-    let data = await Users.findOne({ _id: _id }) // using findOne instead of find()
+    let data = await Users.findOne({ _id: _id })
     res.json(data)
   } catch (err) {
     res.status(500).json({ error: err.message })
@@ -55,64 +36,43 @@ let deleteUser = async (req, res) => {
 
 let insertUser = async (req, res) => {
   try {
-    // Multer middleware for single image (photo) and multiple images (images)
-    upload.fields([
-      { name: 'photo', maxCount: 1 },    // Single file for 'photo'
-      { name: 'images', maxCount: 10 }    // Multiple files for 'images' (maximum 10)
-    ])(req, res, async (err) => {
-      if (err) {
-        return res.status(400).json({ error: err.message });
-      }
+    let body = req.body || {}; 
+    console.log(body)
+    // Convert professions to array if it comes as string
+    if (body.professions && typeof body.professions === "string") {
+      body.professions = body.professions.split(",").map(p => p.trim());
+    }
 
-      let body = req.body;
+    const user = await Users.create(body);
+    res.json({ success: true, data: user,_userId : user._id });
+    console.log(user,user._id);
 
-      // Handling the 'photo' field (single image)
-      if (req.files['photo']) {
-        body.photo = req.files['photo'][0].path; // Save the path of the uploaded photo
-      }
-
-      // Handling the 'images' field (multiple images)
-      if (req.files['images']) {
-        body.images = req.files['images'].map(file => file.path); // Store file paths for multiple images
-      }
-
-      // If professions are sent as a CSV, convert it to an array
-      if (body.professions) {
-        body.professions = body.professions.split(',');  // Convert CSV to array
-      }
-
-      // Now save the user data with the images
-      await Users.create(body);
-
-      res.json({ status: 'success' });
-    });
   } catch (err) {
+    console.error(err);
     res.status(500).json({ error: err.message });
   }
 };
 
 
-
-/*
-// ✅ Insert new user
-let insertUser = async (req, res) => {
-  try {
-    let body = req.body
-    await Users.create(body) // ✅ fixed insertOne → create
-    res.json({ status: 'success' })
-  } catch (err) {
-    res.status(500).json({ error: err.message })
-  }
-}
-  */
-
 // ✅ Update existing user
 let updateUser = async (req, res) => {
   try {
-    let body = req.body
-    let _id = req.params._id
-    await Users.updateOne({ _id: _id }, { $set: body })
-    res.json({ status: 'success' })
+    let body = req.body || {}
+    let _id = req.params.userId
+    console.log(_id)
+    // Convert professions string → array (if needed)
+    if (body.professions && typeof body.professions === "string") {
+      body.professions = body.professions
+        .split(",")
+        .map((p) => p.trim())
+        .filter((p) => p.length > 0)
+    }
+
+    const updatedUser = await Users.findByIdAndUpdate(_id, body, { new: true })
+    // res.json(updatedUser) // return updated object with _id
+    res.json({ success: true, data: updatedUser,_userId : updatedUser._id });
+    console.log(updateUser);
+
   } catch (err) {
     res.status(500).json({ error: err.message })
   }

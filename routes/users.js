@@ -14,15 +14,15 @@ let router = express.Router();
 router.get('/', allUsers);
 
 // Get single User by ID
-router.get('/:_id', singleUser);
+router.get('/:userId', singleUser);
 
 // Insert a new User
 router.post('/', insertUser);
 
 // Update a User by ID
-router.patch('/:_id', updateUser);
+router.put('/:userId', updateUser);
 
 // Delete a User by ID
-router.delete('/:_id', deleteUser);
+router.delete('/:userId', deleteUser);
 
 module.exports = router;
