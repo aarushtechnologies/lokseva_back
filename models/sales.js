@@ -4,7 +4,7 @@ const salesSchema = new mongoose.Schema(
   {
     _userid: {
       type: mongoose.Schema.Types.ObjectId, // Ref to user collection
-      ref: 'Register',
+      ref: 'users',
       required: true
     },
     taluka: {

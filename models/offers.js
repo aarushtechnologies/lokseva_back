@@ -17,7 +17,7 @@ const OfferSchema = new mongoose.Schema(
     
     _userid: {
       type: mongoose.Schema.Types.ObjectId, // Reference to Register collection
-      ref: 'Register',
+      ref: 'users',
       required: true,
     },
     score: {type:Number, required : true},
