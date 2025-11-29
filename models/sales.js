@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 const salesSchema = new mongoose.Schema(
   {
-    _userid: {
+    _userId: {
       type: mongoose.Schema.Types.ObjectId, // Ref to user collection
       ref: 'users',
       required: true
