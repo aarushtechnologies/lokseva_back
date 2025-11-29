@@ -12,24 +12,16 @@ let allSales = async (req, res) => {
   }
 }
 
-// ✅ Get all sales for a particular user by their _userId
+// ✅ Get single sale by ID
 let salesById = async (req, res) => {
   try {
-    // Extract _userId from the route parameters
-    let _userId = req.params._userId;
-
-    // Use find() to retrieve all sales records for the given _userId
-    let data = await Sales.find({ _userId: _userId }) // Find all sales matching the _userId
-      .populate('_userId') // Optionally populate the related user data
-
-    // Respond with the data (all sales records for that user)
-    res.json(data);
+    let _userId = req.params._userId
+    let data = await Sales.find({ _userId: _userId }).populate('_userId')
+    res.json(data)
   } catch (err) {
-    // Handle any errors
-    res.status(500).json({ error: err.message });
+    res.status(500).json({ error: err.message })
   }
-};
-
+}
 
 // ✅ Delete sale
 let deleteSale = async (req, res) => {
