@@ -15,8 +15,8 @@ let allSales = async (req, res) => {
 // ✅ Get single sale by ID
 let singleSale = async (req, res) => {
   try {
-    let _id = req.params._id
-    let data = await Sales.findOne({ _id: _id }).populate('_userId')
+    let _userId = req.params._userId
+    let data = await Sales.findOne({ _userId: _userId }).populate('_userId')
     res.json(data)
   } catch (err) {
     res.status(500).json({ error: err.message })
