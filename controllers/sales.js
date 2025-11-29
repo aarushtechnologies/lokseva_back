@@ -13,10 +13,10 @@ let allSales = async (req, res) => {
 }
 
 // ✅ Get single sale by ID
-let singleSale = async (req, res) => {
+let salesById = async (req, res) => {
   try {
     let _userId = req.params._userId
-    let data = await Sales.findOne({ _userId: _userId }).populate('_userId')
+    let data = await Sales.find({ _userId: _userId }).populate('_userId')
     res.json(data)
   } catch (err) {
     res.status(500).json({ error: err.message })
@@ -59,7 +59,7 @@ let updateSale = async (req, res) => {
 
 module.exports = {
   allSales,
-  singleSale,
+  salesById,
   deleteSale,
   insertSale,
   updateSale,

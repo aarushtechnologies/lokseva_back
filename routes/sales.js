@@ -2,7 +2,7 @@ let express = require('express');
 
 let { 
   allSales,
-  singleSale, 
+  salesById, 
   deleteSale,
   insertSale,
   updateSale
@@ -14,7 +14,7 @@ let router = express.Router();
 router.get('/', allSales);
 
 // Get single sale by ID
-router.get('/:_userId', singleSale);
+router.get('/:_userId', salesById);
 
 // Insert a new sale
 router.post('/', insertSale);
