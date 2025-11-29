@@ -14,7 +14,7 @@ let router = express.Router();
 router.get('/', allSales);
 
 // Get single sale by ID
-router.get('/:_id', singleSale);
+router.get('/:_userId', singleSale);
 
 // Insert a new sale
 router.post('/', insertSale);
