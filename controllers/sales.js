@@ -5,7 +5,7 @@ let Sales = require('../models/sales.js')
 // ✅ Get all sales
 let allSales = async (req, res) => {
   try {
-    let data = await Sales.find().populate('_userid') // populate user info if needed
+    let data = await Sales.find().populate('_userId') // populate user info if needed
     res.json(data)
   } catch (err) {
     res.status(500).json({ error: err.message })
@@ -16,7 +16,7 @@ let allSales = async (req, res) => {
 let singleSale = async (req, res) => {
   try {
     let _id = req.params._id
-    let data = await Sales.findOne({ _id: _id }).populate('_userid')
+    let data = await Sales.findOne({ _id: _id }).populate('_userId')
     res.json(data)
   } catch (err) {
     res.status(500).json({ error: err.message })
