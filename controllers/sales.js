@@ -41,7 +41,7 @@ let insertSale = async (req, res) => {
     await Sales.create(body) // ✅ create is the right method
     res.json({ status: 'success' })
   } catch (err) {
-    res.status(500).json({ error: err.message,req.body })
+    res.status(500).json({ error: err.message })
   }
 }
 
