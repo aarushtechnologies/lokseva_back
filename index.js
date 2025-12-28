@@ -19,7 +19,7 @@ let PropertiesRouter = require('./routes/properties.js')
 app.use('/api/users/',UserRouter)
 app.use('/api/offers/',OffersRouter)
 app.use('/api/birthdays/',BirthdaysRouter)
-app.use('/api/sale/',SalesRouter)
+app.use('/api/sales/',SalesRouter)
 app.use('/api/properties/',PropertiesRouter)
 
 app.listen(port,()=>{
