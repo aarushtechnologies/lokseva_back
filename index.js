@@ -13,6 +13,7 @@ let OffersRouter = require('./routes/offers.js')
 let BirthdaysRouter = require('./routes/birthdays.js')
 let SalesRouter = require('./routes/sales.js')
 let PropertiesRouter = require('./routes/properties.js')
+const r2Routes = require("./routes/r2");
 
 
 
