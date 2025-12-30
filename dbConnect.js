@@ -7,6 +7,6 @@
 let mongoose = require('mongoose');
 require('dotenv').config(); // Load .env file
 
-mongoose.connect(process.env.MONGO_URI)
+mongoose.connect(process.env.MONGODB_URI)
   .then(() => console.log('Db Connected'))
   .catch(err => console.log(err));
