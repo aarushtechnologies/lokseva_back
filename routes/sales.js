@@ -1,28 +1,19 @@
-let express = require('express');
+const express = require("express");
 
-let { 
+const {
   allSales,
-  salesById, 
+  salesById,
   deleteSale,
   insertSale,
-  updateSale
-} = require('../controllers/sales.js');
+  updateSale,
+} = require("../controllers/sales");
 
-let router = express.Router();
+const router = express.Router();
 
-// Get all sales
-router.get('/', allSales);
-
-// Get single sale by ID
-router.get('/:_userId', salesById);
-
-// Insert a new sale
-router.post('/', insertSale);
-
-// Update a sale by ID
-router.patch('/:_id', updateSale);
-
-// Delete a sale by ID
-router.delete('/:_id', deleteSale);
+router.get("/", allSales);
+router.get("/:_userId", salesById);
+router.post("/", insertSale);
+router.patch("/:_id", updateSale);
+router.delete("/:_id", deleteSale);
 
 module.exports = router;

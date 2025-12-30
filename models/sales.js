@@ -1,47 +1,26 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 const salesSchema = new mongoose.Schema(
   {
     _userId: {
-      type: mongoose.Schema.Types.ObjectId, // Ref to user collection
-      ref: 'users',
-      required: true
-    },
-    taluka: {
-      type: String,
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "users",
       required: true,
-      trim: true
     },
+    taluka: String,
     photos: {
-      type: [String], // Array of image URLs/paths
-      default: []
+      type: [String], // R2 URLs
+      default: [],
     },
-    category: {
-      type: String,
-      required: true,
-      trim: true
-    },
-    title: {
-      type: String,
-      required: true,
-      trim: true
-    },
-    details: {
-      type: String,
-      required: true,
-      trim: true
-    },
-    price: {
-      type: Number,
-      required: true,
-      min: 0
-    }
+    category: String,
+    title: String,
+    details: String,
+    price: Number,
   },
-  
-  { 
-    collection: 'Sales',
-    timestamps: true 
-    } // adds createdAt & updatedAt
+  {
+    collection: "Sales",
+    timestamps: true,
+  }
 );
 
-module.exports = mongoose.model('Sales', salesSchema);
+module.exports = mongoose.model("Sales", salesSchema);

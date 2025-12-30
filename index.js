@@ -21,6 +21,8 @@ app.use('/api/offers/',OffersRouter)
 app.use('/api/birthdays/',BirthdaysRouter)
 app.use('/api/sales/',SalesRouter)
 app.use('/api/properties/',PropertiesRouter)
+app.use("/api/r2", r2Routes);
+
 
 app.listen(port,()=>{
     console.log('server started')
