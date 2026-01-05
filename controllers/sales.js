@@ -1,32 +1,26 @@
 require("../dbConnect");
 const Sales = require("../models/sales");
 
-// GET /api/sales?talukas[]=A&talukas[]=B&category=XYZ&search=abc&page=1&limit=10
+// Get paginated sales with filters
 const allSales = async (req, res) => {
   try {
-    let { talukas, category, search, page = 1, limit = 10 } = req.query;
+    const { page = 1, limit = 10, talukas, category, search } = req.query;
 
-    page = parseInt(page);
-    limit = parseInt(limit);
+    let filter = {};
 
-    // Build filter object
-    const filter = {};
-
-    // Taluka filter
-    if (talukas) {
-      // If talukas is a string (single) → convert to array
-      if (!Array.isArray(talukas)) talukas = [talukas];
-      if (!talukas.includes("सर्व")) {
-        filter.taluka = { $in: talukas };
-      }
+    // Taluka filter (array)
+    if (talukas && talukas.length && !talukas.includes("सर्व")) {
+      filter.taluka = { $in: Array.isArray(talukas) ? talukas : [talukas] };
     }
 
     // Category filter
-    if (category && category !== "सर्व") filter.category = category;
+    if (category && category !== "") {
+      filter.category = category;
+    }
 
-    // Search filter (title, details, category, taluka)
-    if (search && search.trim() !== "") {
-      const regex = new RegExp(search.trim(), "i");
+    // Search filter
+    if (search && search !== "") {
+      const regex = new RegExp(search, "i");
       filter.$or = [
         { title: regex },
         { details: regex },
@@ -37,24 +31,21 @@ const allSales = async (req, res) => {
 
     const total = await Sales.countDocuments(filter);
 
-    const sales = await Sales.find(filter)
+    const data = await Sales.find(filter)
       .populate("_userId")
-      .sort({ createdAt: -1 }) // latest first
       .skip((page - 1) * limit)
-      .limit(limit);
+      .limit(parseInt(limit));
 
     res.json({
-      data: sales,
-      total,
-      page,
-      limit,
+      total,      // ✅ total number of matching products
+      data,
       hasMore: page * limit < total,
     });
   } catch (err) {
-    console.error(err);
     res.status(500).json({ error: err.message });
   }
 };
+
 
 const salesById = async (req, res) => {
   try {
