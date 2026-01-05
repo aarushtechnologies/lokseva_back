@@ -1,5 +1,4 @@
 const express = require("express");
-
 const {
   allSales,
   salesById,
@@ -10,7 +9,7 @@ const {
 
 const router = express.Router();
 
-router.get("/", allSales);
+router.get("/", allSales); // GET with query params for pagination + filters
 router.get("/:_userId", salesById);
 router.post("/", insertSale);
 router.patch("/:_id", updateSale);
