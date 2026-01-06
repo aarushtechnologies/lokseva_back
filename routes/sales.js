@@ -5,30 +5,24 @@ const {
   insertSale,
   updateSale,
   deleteSale,
+  bulkDeleteSales,
 } = require("../controllers/sales");
 
 const router = express.Router();
 
-// ===============================
-// SALES LIST (FILTERS + PAGINATION)
-// ===============================
+// LIST
 router.get("/", allSales);
 
-// ===============================
-// USER SALES (LEGACY + SAFE)
-// ===============================
-
-// 🔴 LEGACY ROUTE (Flutter MySales depends on this)
+// USER SALES (legacy + safe)
 router.get("/:_userId", salesById);
-
-// 🟢 NEW SAFE ROUTE (for future use)
 router.get("/user/:_userId", salesById);
 
-// ===============================
 // CRUD
-// ===============================
 router.post("/", insertSale);
 router.patch("/:_id", updateSale);
 router.delete("/:_id", deleteSale);
+
+// 🔥 BULK DELETE
+router.post("/bulk-delete", bulkDeleteSales);
 
 module.exports = router;
