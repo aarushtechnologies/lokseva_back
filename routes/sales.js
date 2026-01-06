@@ -15,8 +15,13 @@ const router = express.Router();
 router.get("/", allSales);
 
 // ===============================
-// USER SALES (SAFE ROUTE)
+// USER SALES (LEGACY + SAFE)
 // ===============================
+
+// 🔴 LEGACY ROUTE (Flutter MySales depends on this)
+router.get("/:_userId", salesById);
+
+// 🟢 NEW SAFE ROUTE (for future use)
 router.get("/user/:_userId", salesById);
 
 // ===============================
