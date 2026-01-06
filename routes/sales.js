@@ -2,9 +2,9 @@ const express = require("express");
 const {
   allSales,
   salesById,
-  deleteSale,
   insertSale,
   updateSale,
+  deleteSale,
 } = require("../controllers/sales");
 
 const router = express.Router();
