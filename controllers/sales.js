@@ -1,20 +1,33 @@
 require("../dbConnect");
 const Sales = require("../models/sales");
 
-// GET /api/sales?talukas[]=A&talukas[]=B&category=XYZ&search=abc&page=1&limit=10
+// GET /api/sales
 const allSales = async (req, res) => {
   try {
-    let { talukas, category, search, page = 1, limit = 10 } = req.query;
+    let { talukas, category, search, page = 1, limit = 10, userId } = req.query;
 
     page = parseInt(page);
     limit = parseInt(limit);
 
-    // Build filter object
-    const filter = {};
+    /* =========================
+       1️⃣ BASE FILTER (NO TALUKA)
+       ========================= */
+    const baseFilter = {};
+
+    if (userId) {
+      baseFilter._userId = userId;
+    }
+
+    // ✅ TOTAL OF ALL PRODUCTS (NO TALUKA / CATEGORY / SEARCH)
+    const totalAll = await Sales.countDocuments(baseFilter);
+
+    /* =========================
+       2️⃣ FILTERED QUERY
+       ========================= */
+    const filter = { ...baseFilter };
 
     // Taluka filter
     if (talukas) {
-      // If talukas is a string (single) → convert to array
       if (!Array.isArray(talukas)) talukas = [talukas];
       if (!talukas.includes("सर्व")) {
         filter.taluka = { $in: talukas };
@@ -22,9 +35,11 @@ const allSales = async (req, res) => {
     }
 
     // Category filter
-    if (category && category !== "सर्व") filter.category = category;
+    if (category && category !== "सर्व") {
+      filter.category = category;
+    }
 
-    // Search filter (title, details, category, taluka)
+    // Search filter
     if (search && search.trim() !== "") {
       const regex = new RegExp(search.trim(), "i");
       filter.$or = [
@@ -35,70 +50,26 @@ const allSales = async (req, res) => {
       ];
     }
 
-    const total = await Sales.countDocuments(filter);
+    // ✅ TOTAL AFTER FILTERS
+    const totalFiltered = await Sales.countDocuments(filter);
 
+    // Paginated data
     const sales = await Sales.find(filter)
       .populate("_userId")
-      .sort({ createdAt: -1 }) // latest first
+      .sort({ createdAt: -1 })
       .skip((page - 1) * limit)
       .limit(limit);
 
     res.json({
       data: sales,
-      total,
+      totalAll,          // ✅ ALL PRODUCTS
+      total: totalFiltered, // ✅ FILTERED PRODUCTS
       page,
       limit,
-      hasMore: page * limit < total,
+      hasMore: page * limit < totalFiltered,
     });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: err.message });
   }
-};
-
-const salesById = async (req, res) => {
-  try {
-    const data = await Sales.find({ _userId: req.params._userId }).populate(
-      "_userId"
-    );
-    res.json(data);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-};
-
-// Insert, update, delete remain same
-const insertSale = async (req, res) => {
-  try {
-    await Sales.create(req.body);
-    res.json({ status: "success" });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-};
-
-const updateSale = async (req, res) => {
-  try {
-    await Sales.updateOne({ _id: req.params._id }, { $set: req.body });
-    res.json({ status: "success" });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-};
-
-const deleteSale = async (req, res) => {
-  try {
-    await Sales.deleteOne({ _id: req.params._id });
-    res.json({ status: "success" });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-};
-
-module.exports = {
-  allSales,
-  salesById,
-  insertSale,
-  updateSale,
-  deleteSale,
 };
