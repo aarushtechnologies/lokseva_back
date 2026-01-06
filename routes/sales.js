@@ -9,8 +9,19 @@ const {
 
 const router = express.Router();
 
-router.get("/", allSales); // GET with query params for pagination + filters
-router.get("/:_userId", salesById);
+// ===============================
+// SALES LIST (FILTERS + PAGINATION)
+// ===============================
+router.get("/", allSales);
+
+// ===============================
+// USER SALES (SAFE ROUTE)
+// ===============================
+router.get("/user/:_userId", salesById);
+
+// ===============================
+// CRUD
+// ===============================
 router.post("/", insertSale);
 router.patch("/:_id", updateSale);
 router.delete("/:_id", deleteSale);

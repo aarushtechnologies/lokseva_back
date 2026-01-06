@@ -1,95 +1,72 @@
 require("../dbConnect");
 const Sales = require("../models/sales");
 
-// Get paginated sales with filters
+// ===============================
+// GET SALES (PAGINATED + FILTERED)
+// ===============================
 const allSales = async (req, res) => {
   try {
-    const { page = 1, limit = 10, talukas, category, search } = req.query;
+    let {
+      page = 1,
+      limit = 20,
+      talukas,
+      category,
+      search,
+    } = req.query;
 
-    let filter = {};
+    page = parseInt(page);
+    limit = parseInt(limit);
 
-    // Taluka filter (array)
-    if (talukas && talukas.length && !talukas.includes("सर्व")) {
-      filter.taluka = { $in: Array.isArray(talukas) ? talukas : [talukas] };
+    const filter = {};
+
+    // ===============================
+    // TALUKA FILTER
+    // ===============================
+    if (talukas && talukas !== "सर्व") {
+      const talukaArray = talukas.split(",").map(t => t.trim());
+      filter.taluka = { $in: talukaArray };
     }
 
-    // Category filter
+    // ===============================
+    // CATEGORY FILTER
+    // ===============================
     if (category && category !== "") {
       filter.category = category;
     }
 
-    // Search filter
-    if (search && search !== "") {
-      const regex = new RegExp(search, "i");
-      filter.$or = [
-        { title: regex },
-        { details: regex },
-        { category: regex },
-        { taluka: regex },
-      ];
+    // ===============================
+    // TEXT SEARCH (INDEXED)
+    // ===============================
+    if (search && search.trim() !== "") {
+      filter.$text = { $search: search.trim() };
     }
 
-    const total = await Sales.countDocuments(filter);
-
-    const data = await Sales.find(filter)
-      .populate("_userId")
+    // ===============================
+    // QUERY
+    // ===============================
+    const query = Sales.find(filter)
+      .sort({ createdAt: -1 }) // ✅ consistent pagination
       .skip((page - 1) * limit)
-      .limit(parseInt(limit));
+      .limit(limit)
+      .select("-__v") // lighter payload
+      .populate({
+        path: "_userId",
+        select: "name mobile", // ⚠️ limit fields
+      });
+
+    const [data, total] = await Promise.all([
+      query,
+      Sales.countDocuments(filter),
+    ]);
 
     res.json({
-      total,      // ✅ total number of matching products
-      data,
+      page,
+      limit,
+      total,
       hasMore: page * limit < total,
+      data,
     });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
-};
-
-
-const salesById = async (req, res) => {
-  try {
-    const data = await Sales.find({ _userId: req.params._userId }).populate(
-      "_userId"
-    );
-    res.json(data);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-};
-
-// Insert, update, delete remain same
-const insertSale = async (req, res) => {
-  try {
-    await Sales.create(req.body);
-    res.json({ status: "success" });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-};
-
-const updateSale = async (req, res) => {
-  try {
-    await Sales.updateOne({ _id: req.params._id }, { $set: req.body });
-    res.json({ status: "success" });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-};
-
-const deleteSale = async (req, res) => {
-  try {
-    await Sales.deleteOne({ _id: req.params._id });
-    res.json({ status: "success" });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-};
-
-module.exports = {
-  allSales,
-  salesById,
-  insertSale,
-  updateSale,
-  deleteSale,
 };
